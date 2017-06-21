@@ -18,3 +18,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('auth/login', 'UserController@login');
+
+Route::group(['middleware' => 'jwt.auth'], function () {
+    Route::post('article/create', 'ArticleController@create');
+    Route::post('article/show', 'ArticleController@show');
+});
