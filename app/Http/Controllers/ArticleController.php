@@ -40,5 +40,49 @@ class ArticleController extends Controller
         return response()->json(['article' => $newArticle], 200);        
     }
 
-    
+    public function update(Request $req) {
+        $user = JWTAuth::toUser($req->token);
+        
+        $validator = Validator::make( $req->all(), [
+            'title' => 'required|min:30',
+            'content' => 'required|min:30',
+        ] );
+
+        if( $validator->fails() ) {
+            return response()->json(['invalid_input'], 422);
+        }
+
+        try {
+            $updatedArticle = $user->articles()->where('id', $req->input('article_id'));
+            $updatedArticle->update([
+                'title' => $req->input('title'),
+                'content' => $req->input('content'),
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['invalid_input'], 422);
+        }   
+
+        if($deletedArticle != null) {
+            return response()->json(['article' => $updatedArticle->first()], 200);
+        } else {
+            return response()->json(['invalid_input'], 422);
+        }
+    }
+
+    public function delete(Request $req) {
+        $user = JWTAuth::toUser($req->token);
+
+        try {
+            $deletedArticle = $user->articles()->where('id', $req->input('article_id'))->first();
+            $user->articles()->where('id', $req->input('article_id'))->delete();
+        } catch (Exception $e) {
+            return response()->json(['invalid_input'], 422);
+        }   
+
+        if($deletedArticle != null) {
+            return response()->json(['article' => $deletedArticle], 200);        
+        } else {
+            return response()->json(['invalid_input'], 422);
+        }
+    }
 }

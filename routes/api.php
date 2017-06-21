@@ -22,4 +22,6 @@ Route::post('auth/login', 'UserController@login');
 Route::group(['middleware' => 'jwt.auth'], function () {
     Route::post('article/create', 'ArticleController@create');
     Route::post('article/show', 'ArticleController@show');
+    Route::put('article/update', 'ArticleController@update');
+    Route::delete('article/delete', 'ArticleController@delete');
 });
